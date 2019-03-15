@@ -10,21 +10,19 @@ import javafx.scene.shape.Shape;
 
 /**
  *
- * @author Gloria
+ * @author Hernan
  */
 public class Player extends Movable {
-    private Image right = new Image("Imagenes/right0.png");
-    private Image left = new Image("Imagenes/left0.png");
-    private Image front = new Image("Imagenes/down1.png");
+    private Image right;
+    private Image left;
     private int headWidth;
-    private String facingDirection = null;
+    private String facingDirection = "RIGHT";
 
     
     public Player(int xPos, int yPosCabeza, int width, int height,int headWidth, Image sprite) {
         super(xPos, yPosCabeza, width, height, sprite);
-        right = new Image("Imagenes/right0.png");
-        left = new Image("Imagenes/left0.png");
-        front = new Image("Imagenes/down1.png");    
+        right = new Image("Imagenes/right1_corregido.png");
+        left = new Image("Imagenes/left1_corregido.png");
         this.headWidth=headWidth;
         
     }
@@ -41,18 +39,6 @@ public class Player extends Movable {
         sprite = right;
         facingDirection = "RIGHT";
     }
-    
-    public void reset(){
-        sprite = front;
-    }
-
-    public Image getRight() {
-        return right;
-    }
-
-    public void setRight(Image right) {
-        this.right = right;
-    }
 
     public Image getLeft() {
         return left;
@@ -62,13 +48,6 @@ public class Player extends Movable {
         this.left = left;
     }
 
-    public Image getFront() {
-        return front;
-    }
-
-    public void setFront(Image front) {
-        this.front = front;
-    }
 
     public int getHeadHeight() {
         return headWidth;
@@ -83,7 +62,7 @@ public class Player extends Movable {
     }
     
     public Projectile shoot(){
-        Projectile projectile = new Projectile(xPos, yPos, facingDirection);
+        Projectile projectile = new Projectile(xPos+10, yPos+10, facingDirection);
         return projectile;
     }
     

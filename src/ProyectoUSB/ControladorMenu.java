@@ -29,7 +29,7 @@ public class ControladorMenu {
     
     public void mostrarVista(){
         Singleton singleton = Singleton.getSingleton();
-        this.menu.mostrar(singleton.getStage());
+        this.menu.show(singleton.getStage());
     }
     
     

@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.media.AudioClip;
 import javafx.scene.shape.Rectangle;
 
 
@@ -18,9 +19,10 @@ import javafx.scene.shape.Rectangle;
  * @author Juan
  */
 public class ControladorNivel1 extends Controlador{
-    private Nivel1 ventana;
-    private Modelo modelo;
+   // private Nivel1 ventana;
+   // private Modelo modelo;
     private boolean paused = false;
+  //  private AudioClip audioL;
     
     public ControladorNivel1(Modelo modelo){
         this.movY=true;
@@ -30,21 +32,23 @@ public class ControladorNivel1 extends Controlador{
         this.ventana.getScene().setOnKeyPressed(new ToPressKeyEvent());
         this.ventana.getScene().setOnKeyReleased(new ToReleaseKeyEvent());
         this.ventana.getPause().setOnAction(new PauseEvent());
+        this.ventana.getReturnToMenuLose().setOnAction(new ReturnToMenuEvent());
+        this.ventana.getReturnToMenuWin().setOnAction(new ReturnToMenuEvent());
+        this.ventana.getNextLevel().setOnAction(new NextLevelEvent());
         
             
 }
     
-    public void mostrarVista(){
+    /*public void mostrarVista(){
         Singleton singleton = Singleton.getSingleton();
-        this.ventana.mostrar(singleton.getStage());
-    }
+        this.ventana.show(singleton.getStage());
+    }*/
     
     
     class ToPressKeyEvent implements EventHandler<KeyEvent>{
     @Override
     public void handle(KeyEvent event){
           String code = event.getCode().toString();
-          
           if(!paused){
             if(!ventana.getKeyPresses().contains(code)){
                         ventana.getKeyPresses().add(code);
@@ -57,16 +61,14 @@ public class ControladorNivel1 extends Controlador{
                 ventana.getBgInverted().moveLeft();
                 ventana.getFloor().moveLeft();
                 ventana.getPlayer().moveRight();
+                ventana.playerFrame++;
                 for(StaticObject objecto:ventana.getObjects()){
                     objecto.moveLeft();
                 }
                 for(Enemy enemy : ventana.getEnemigos()){
                     enemy.moveLeft();
                 }
-                for(Hole hole:ventana.getHoles()){
-                    hole.moveLeft();
-                    hole.setWidth(hole.getWidth()-15);
-                }
+                
             }
             /*Solo se mueve hacia la izquierda si no colisiona con ningún objeto en esa dirección*/
             if ((ventana.getKeyPresses().contains("LEFT") || ventana.getKeyPresses().contains("A"))&&(!colision(ventana.getPlayer(), ventana.getObjects()).equals("LEFT"))){
@@ -75,16 +77,14 @@ public class ControladorNivel1 extends Controlador{
                     ventana.getBgInverted().moveRight();
                     ventana.getFloor().moveRight();
                     ventana.getPlayer().moveLeft();
+                    ventana.playerFrame++;
                     for(StaticObject objecto:ventana.getObjects()){
                         objecto.moveRight();
                     }
                     for(Enemy enemy : ventana.getEnemigos()){
                         enemy.moveRight();
                     }
-                    for(Hole hole:ventana.getHoles()){
-                        hole.moveRight();
-                        hole.setWidth(hole.getWidth()+15);
-                    }
+                    
               }
             }
             /*Solo se mueve hacia arriba si no colisiona con ningún objeto en esa dirección*/
@@ -97,10 +97,14 @@ public class ControladorNivel1 extends Controlador{
             if(ventana.getKeyPresses().contains("C")){
                 Projectile projectile = ventana.getPlayer().shoot();
                 ventana.getProjectiles().add(projectile);
+                audioL = new AudioClip (this.getClass().getResource("/Audios/laser3.wav").toString());
+                audioL.play();
+
             }
           }
       }
     }
+    
     
     class ToReleaseKeyEvent implements EventHandler<KeyEvent>{
     @Override
@@ -130,5 +134,25 @@ public class ControladorNivel1 extends Controlador{
         }
     }
     
+    class ReturnToMenuEvent implements EventHandler<ActionEvent>{
+
+        @Override
+        public void handle(ActionEvent t) {
+            ControladorMenu menu = new ControladorMenu(modelo);
+            menu.mostrarVista();
+            ventana.getAudio().stop();
+        }
+        
+    }
+    class NextLevelEvent implements EventHandler<ActionEvent>{
+
+        @Override
+        public void handle(ActionEvent t) {
+            ControladorNivel2 n2 = new ControladorNivel2(modelo);
+            n2.mostrarVista();
+            ventana.getAudio().stop();
+        }
+        
+    }
   }
 

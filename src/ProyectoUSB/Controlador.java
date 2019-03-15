@@ -8,6 +8,7 @@ package ProyectoUSB;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.media.AudioClip;
 
 /**
  *
@@ -18,13 +19,14 @@ public abstract class Controlador {
     protected Modelo modelo;
     protected boolean movY;
     protected boolean movX;
+    protected AudioClip audioL;
     
     public void mostrarVista(){
         Singleton singleton=Singleton.getSingleton();
-        this.ventana.mostrar(singleton.getStage());
+        this.ventana.show(singleton.getStage());
     }
     
-    class EventoBotonReintentar implements EventHandler<ActionEvent>{
+   /* class EventoBotonReintentar implements EventHandler<ActionEvent>{
     @Override
     public void handle(ActionEvent event){
           
@@ -43,7 +45,7 @@ public abstract class Controlador {
     public void handle(ActionEvent event){
           
     }
-    }
+    }*/
     
     public String colision(Movable object1, Movable object2){ //Devuelve la posicion en la que se van a chocar desde la perspectiva del 
                                                               //primer objeto que se pone como parámetro
@@ -102,5 +104,14 @@ public abstract class Controlador {
     public void setMovX(boolean movX) {
         this.movX = movX;
     }
+
+    public AudioClip getAudioL() {
+        return audioL;
+    }
+
+    public void setAudioL(AudioClip audioL) {
+        this.audioL = audioL;
+    }
+ 
     
 }

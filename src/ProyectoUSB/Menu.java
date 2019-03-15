@@ -27,13 +27,13 @@ import javafx.stage.Stage;
  *
  * @author Juan
  */
-public class Menu {
+public class Menu extends Vista{
     private Scene scene;
     private StackPane stackGrid;
     private Image background;
     private Label title;
     private Button play;
-    private Button highScores;
+    private Button instructions;
     private Button exit;
     private ImageView image;
     private VBox internalVBox; 
@@ -41,7 +41,7 @@ public class Menu {
     private GridPane grid;
     private AudioClip audio;
     
-    public Menu(){
+    public Menu (){
         
         //Contiene todos los elementos
         stackGrid = new StackPane();
@@ -72,16 +72,16 @@ public class Menu {
         
        
         
-        highScores = new Button("High Scores");
-        highScores.setTextFill(Color.web("#000000"));
-        highScores.setMaxWidth(100);
+        instructions = new Button("Instructions");
+        instructions.setTextFill(Color.web("#000000"));
+        instructions.setMaxWidth(100);
         
         exit = new Button("Exit");
         exit.setTextFill(Color.web("#000000"));
         exit.setMaxWidth(100);
     
         internalVBox.getChildren().add(play);
-        internalVBox.getChildren().add(highScores);
+        internalVBox.getChildren().add(instructions);
         internalVBox.getChildren().add(exit);
         
         //Añade los elementos al GridPane
@@ -96,19 +96,20 @@ public class Menu {
         audio = new AudioClip (this.getClass().getResource("/Audios/AudioMenu.wav").toString());
         audio.play();
         
-        if(audio.isPlaying()==false){
+        while(audio.isPlaying()==false){
             audio.play();
         }
     
     }
     
-    public void show(Stage stage) {
+    /*public void show(Stage stage) {
       stage.setTitle("Orion's Maze");
       stage.setScene(scene);
       stage.show();
-   }
+   }*/
     
-    public void mostrar(Stage stage){
+    @Override
+    public void show(Stage stage){
         stage.setTitle("Ventana 1");
         stage.setScene(scene);
         stage.show();
@@ -121,15 +122,16 @@ public class Menu {
 
 
     public Button getHighScores() {
-        return highScores;
+        return instructions;
     }
 
     public Button getExit() {
         return exit;
     }
 
-    public AudioClip getAudio() {
-        return audio;
+
+    @Override
+    public void handle(long l) {
     }
 
     

@@ -5,6 +5,7 @@
  */
 package ProyectoUSB;
 
+import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
@@ -13,16 +14,16 @@ import javafx.event.EventHandler;
  * @author Juan
  */
 public class ControladorMejPun {
-     private MejoresPuntuaciones mp;
+     private Instructions mp;
      private Modelo modelo;
 
     public ControladorMejPun() {
-        this.mp = new MejoresPuntuaciones();
+        this.mp = new Instructions();
         
         //adicionar eventos
         Modelo modelo = new Modelo();
         this.mp.getBack().setOnAction(new EventoBack());
-        this.mp.getL1();
+        this.mp.getLabel().get(0);
         
     }
     
@@ -43,7 +44,7 @@ public class ControladorMejPun {
         
     }
     
-    class EventoOptions implements EventHandler<ActionEvent>{
+    /*class EventoOptions implements EventHandler<ActionEvent>{
 
         @Override
         public void handle(ActionEvent t) {
@@ -72,9 +73,9 @@ public class ControladorMejPun {
            //c2.mostrarVista();
         }
         
-    }
+    }*/
 
-    public MejoresPuntuaciones getVentana1() {
+    public Instructions getVentana1() {
         return mp;
     }
     

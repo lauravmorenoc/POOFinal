@@ -14,7 +14,7 @@ import javafx.scene.shape.Shape;
 
 /**
  *
- * @author Gloria
+ * @author Hernan
  */
 public class Enemy extends Movable implements Runnable {
     
@@ -48,10 +48,10 @@ public class Enemy extends Movable implements Runnable {
         }
     }
     
-    public Projectile shoot(ArrayList<Projectile> projectiles){
+    /*public Projectile shoot(ArrayList<Projectile> projectiles){
         Projectile projectile = new Projectile(xPos, yPos, "LEFT");
         return projectile;
-    }
+    }*/
 
     public int getHealth() {
         return health;

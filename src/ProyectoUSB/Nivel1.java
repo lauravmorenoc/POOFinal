@@ -5,6 +5,8 @@
  */
 package ProyectoUSB;
 
+import static ProyectoUSB.Singleton.singleton;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,12 +21,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
@@ -37,7 +42,7 @@ public class Nivel1 extends Vista {
     private StackPane stackGrid;
     private Image background1;
     private ImageView image1;
-    private Button pause;
+ //   private Button pause;
     private Canvas canvas;
     private HBox hbox;
     private int cont=650;
@@ -48,11 +53,14 @@ public class Nivel1 extends Vista {
     private boolean dangerDown;
     private Modelo modelo;
     private int enemyMovementIndex;
-    private Label health;
-    private Label lives;
+   /*private AudioClip audio;
+    private AudioClip audioP;
+    private AudioClip audioV;*/
+   
     
 
     public Nivel1(Modelo modelo){
+        
         this.modelo = modelo;
         objectUp=false;
         objectDown=true;
@@ -65,10 +73,13 @@ public class Nivel1 extends Vista {
         //image2 = new ImageView(background2);
         this.lives = new Label();
         this.health = new Label();
+        this.score = new Label();
         
         pause = new Button ("Pause");
         pause.setAlignment(Pos.TOP_RIGHT);
 
+        this.playerFrame = 0;
+        this.enemyFrame = 0;
 
         hbox = new HBox();
         hbox.setSpacing(20);
@@ -76,12 +87,20 @@ public class Nivel1 extends Vista {
         hbox.getChildren().add(pause);
         hbox.getChildren().add(lives);
         hbox.getChildren().add(health);
-
+        hbox.getChildren().add(score);
+        Font font = new Font("Georgia", 20);
+        lives.setFont(font);
+        health.setFont(font);
+        score.setFont(font);
+        lives.setTextFill(Color.WHITE);
+        health.setTextFill(Color.WHITE);
+        score.setTextFill(Color.WHITE);
+        
         layout.getChildren().add(hbox);
         //scene = new Scene (stackGrid, 650, 406);
 
 
-        this.player = new Player(300, 331, 29, 39, 20, new Image("Imagenes/down1.png"));
+        this.player = new Player(300, 331, 29, 39, 20, new Image("Imagenes/front.png"));
         this.floor= new StaticObject(0, 371, 300, 200, new Image("Imagenes/floor1.jpg"));
         this.bg=new Background(0, 0, 650, 406, new Image("Imagenes/esc1.jpg"));
         this.bgInverted=new Background(0, 0, 650, 406, new Image("Imagenes/esc1.jpg"));
@@ -149,18 +168,22 @@ public class Nivel1 extends Vista {
         StaticObject plataforma0=new StaticObject(495, 322, 59, 59, new Image("Imagenes/alienfloor2_diffuse.jpg")); //Los terminos x, y deben ser el x, y
         this.objects.add(plataforma0);                                                                              //del jugador + o - multiplos de quince para que las colisiones se registren 
                                                                                                                     //Width y height deben ser multipos de 15 menos una unidad
+        audio = new AudioClip (this.getClass().getResource("/Audios/aud3.wav").toString());
+        audio.play();
+        
+        while(audio.isPlaying()==false){
+            audio.play();
+        }
 
-        Hole hole1=new Hole(800, 1000);
-        this.holes.add(hole1);
-
-
+        
     }
-    public void show(Stage stage) {
+    
+    /*public void show(Stage stage) {
       stage.setTitle("Orion's Maze");
       stage.setScene(scene);
       this.start();
       stage.show();
-   }
+   }*/
 
     public boolean getSalto() {
         return salto;
@@ -171,18 +194,18 @@ public class Nivel1 extends Vista {
     }
 
 
-    public void mostrar(Stage stage){
+    //@Override
+    /*public void show(Stage stage){
 
-        stage.setTitle("Ventana 1");
-        this.start();
+        stage.setTitle("Orion's Maze");
         stage.setScene(this.scene);
-
+        this.start();
         stage.show();
-    }  
+    }  */
 
-    public Button getPause() {
+    /*public Button getPause() {
         return pause;
-    }
+    }*/
 
     public void toJump(){
         this.player.start();
@@ -191,7 +214,6 @@ public class Nivel1 extends Vista {
 
     @Override
     public void handle(long now){
-        
         dangerDown = false;
         Shape playerHitbox = new Rectangle(player.getxPos(), player.getyPos(), 29, 39);
         
@@ -199,15 +221,14 @@ public class Nivel1 extends Vista {
         if(frames % 2 == 0){
             health.setText("Salud: " + modelo.getSalud());
             lives.setText("Vidas: " + modelo.getVidas());
+            score.setText("Puntaje: " + singleton.getScore());
             System.out.println(bg.getxPos());
             pencil.clearRect(0, 0, 650, 406);
 
-            if(enemigos.isEmpty() || enemigos.size() < 3){
-                Enemy enemigo = new Enemy(this.floor.getxPos()+600+300*enemyMovementIndex, 324, 40, 40, new Image("Imagenes/left0.png"), 2);
+            if(enemigos.size() < 15){
+                Enemy enemigo = new Enemy(this.floor.getxPos()+600+300*enemyMovementIndex, 324, 40, 40, new Image("Imagenes/enemy.png"), 2);
                 enemigos.add(enemigo);
-                if(enemigos.size() >= 1){
-                    enemyMovementIndex++;
-                }
+                enemyMovementIndex++;
             }
 
             for(int n=0; n<100; n++){
@@ -226,11 +247,13 @@ public class Nivel1 extends Vista {
             
 
             for(Enemy enemy : this.enemigos){
-                
+                //pencil.drawImage(player.getSprite(), 48*this.playerFrame, 0, 48, 50, player.getxPos(), player.getyPos(), player.getWidth(), player.getHeight());
                 if(!enemigos.isEmpty()){
+                    if(enemy.getHealth() == 2)this.enemyFrame = 2;
+                    if(enemy.getHealth() == 1)this.enemyFrame = 0;
                     Shape enemyHitbox = new Rectangle (enemy.getxPos(), enemy.getyPos(), enemy.getWidth(), enemy.getHeight());
                     Shape playerComparator = SVGPath.intersect(enemyHitbox, playerHitbox);
-                    pencil.drawImage(enemy.getSprite(), enemy.getxPos(), enemy.getyPos());
+                    pencil.drawImage(enemy.getSprite(), 39*this.enemyFrame, 0, 39, 29, enemy.getxPos(), enemy.getyPos(), enemy.getWidth(), enemy.getHeight());
                     enemy.start();
                     for(Projectile projectile : this.projectiles){
                         if(!projectiles.isEmpty()){
@@ -239,16 +262,19 @@ public class Nivel1 extends Vista {
                             projectile.start();
                             Shape enemyComparator = SVGPath.intersect(projectileHitbox, enemyHitbox);
                             if(enemyComparator.getBoundsInLocal().getWidth() != -1){
-                                
                                 enemy.setHealth(enemy.getHealth() - 1);
                                 projectiles.remove(projectile);
                                 if(enemy.getHealth() == 0){
                                     enemigos.remove(enemy);
+                                    try {
+                                        singleton.setScore(singleton.getScore() + 100);
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(Nivel1.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
                                 }
                             }
                             if(projectile.getxPos() == player.getxPos() + 325 || projectile.getxPos() == player.getxPos() - 325){
-                                //projectiles.remove(projectile);
-                                System.out.println("Proyectil eliminado");
+                                projectiles.remove(projectile);
                             }
                         
                     }
@@ -287,9 +313,15 @@ public class Nivel1 extends Vista {
                             floor.setxPos(floor.xPosInicial);
                         }
                         if(modelo.getVidas() == 0){
+                            try {
+                                singleton.setScore(singleton.getScore() * modelo.getSalud() * modelo.getVidas());
+                            } catch (IOException ex) {
+                                Logger.getLogger(Nivel1.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            this.layout.getChildren().add(deathPane);
                             this.stop();
-                            /*Singleton singleton = Singleton.getSingleton();
-                            singleton.getStage().setScene(death); Añadir scene de muerte*/
+                            audioP = new AudioClip (this.getClass().getResource("/Audios/perder.wav").toString());
+                            audioP.play();
                         }
                     }
                 }
@@ -311,8 +343,7 @@ public class Nivel1 extends Vista {
                 }
             }
 
-            pencil.drawImage(player.getSprite(), player.getxPos(), player.getyPos());
-            pencil.strokeRect(player.getxPos(), player.getyPos(), 29, 39);
+            pencil.drawImage(player.getSprite(), 48*this.playerFrame, 0, 48, 50, player.getxPos(), player.getyPos(), player.getWidth(), player.getHeight());
             
             boolean atLeastOneDown=false;
             boolean atLeastOneUp=false;
@@ -350,7 +381,7 @@ public class Nivel1 extends Vista {
                }
 }
             //Aqui mira exclusivamente si no tiene piso debajo
-               if((player.getyPos()+player.getHeight()+1)==(floor.getyPos())){
+               if(((player.getyPos()+player.getHeight()+1)==(floor.getyPos()))&&!dangerDown){
                  objectDown=true;
                }
 
@@ -368,13 +399,56 @@ public class Nivel1 extends Vista {
                 contadorSalto--;
                 salto=false;
             }
+            if(bg.getxPos() == -4500){
+               
+                /*try {
+                    singleton.setScore(singleton.getScore() * modelo.getSalud() * modelo.getVidas());
+                } catch (IOException ex) {
+                    Logger.getLogger(Nivel1.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                ---------------------------------NOTA----------------------------------
+                 
+
+                Esta funcion almacena el puntaje en el archivo. Pero cuando se habilita, el nivel no se acaba,
+                siguen apareciendo enemigos y no termina. Arreglar,                
+                */
+                
+                
+                this.layout.getChildren().add(winPane);
+                this.stop();
+                
+                audioV = new AudioClip (this.getClass().getResource("/Audios/victoria.wav").toString());
+                audioV.play();
             }
+            
+            if(((player.getyPos()+player.getHeight())>=371)&&dangerDown){
+                
+                this.modelo.setVidas(this.modelo.getVidas()-1);
+                for(Enemy enemigo : enemigos){
+                                enemigo.setxPos(enemigo.xPosInicial);
+                            }
+                for(StaticObject o : objects){
+                     o.setxPos(o.xPosInicial);
+                 }
+                    bg.setxPos(bg.xPosInicial);
+                    bgInverted.setxPos(bgInverted.xPosInicial);
+                    player.setyPos(331);
+                    floor.setxPos(floor.xPosInicial);
+                    enemyMovementIndex=0;
+                    dangerDown=false;
+            }
+        }
 
 
 
         frames++;
-        if(frames == 5) frames = 0;
+        if(this.playerFrame > 3) this.playerFrame = 0; 
     }
+
+    /*public AudioClip getAudio() {
+        return audio;
+    }*/
 
 
 }

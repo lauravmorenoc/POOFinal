@@ -10,7 +10,7 @@ import javafx.scene.shape.Rectangle;
 
 /**
  *
- * @author Gloria
+ * @author Hernan
  */
 public class Projectile extends Movable {
     private String movingDirection;
@@ -50,6 +50,6 @@ public class Projectile extends Movable {
         }
         if(movingDirection.equals("LEFT")){
             moveLeft();
-        }
+        } 
     }
 }
