@@ -74,6 +74,7 @@ public class Nivel1 extends Vista {
         this.lives = new Label();
         this.health = new Label();
         this.score = new Label();
+        this.HighestScore=new Label();
         
         pause = new Button ("Pause");
         pause.setAlignment(Pos.TOP_RIGHT);
@@ -88,13 +89,16 @@ public class Nivel1 extends Vista {
         hbox.getChildren().add(lives);
         hbox.getChildren().add(health);
         hbox.getChildren().add(score);
+        hbox.getChildren().add(HighestScore);
         Font font = new Font("Georgia", 20);
         lives.setFont(font);
         health.setFont(font);
         score.setFont(font);
+        HighestScore.setFont(font);
         lives.setTextFill(Color.WHITE);
         health.setTextFill(Color.WHITE);
         score.setTextFill(Color.WHITE);
+        HighestScore.setTextFill(Color.WHITE);
         
         layout.getChildren().add(hbox);
         //scene = new Scene (stackGrid, 650, 406);
@@ -222,6 +226,12 @@ public class Nivel1 extends Vista {
             health.setText("Salud: " + modelo.getSalud());
             lives.setText("Vidas: " + modelo.getVidas());
             score.setText("Puntaje: " + singleton.getScore());
+            HighestScore.setText("Máximo Puntaje: " + singleton.getScore());
+            try {
+                HighestScore.setText("Máximo Puntaje: " + singleton.getData().getLastSaved());
+            } catch (IOException ex) {
+                Logger.getLogger(Nivel1.class.getName()).log(Level.SEVERE, null, ex);
+            }
             System.out.println(bg.getxPos());
             pencil.clearRect(0, 0, 650, 406);
 
@@ -320,6 +330,11 @@ public class Nivel1 extends Vista {
                             }
                             this.layout.getChildren().add(deathPane);
                             this.stop();
+                            try {
+                                singleton.setScore(0);
+                            } catch (IOException ex) {
+                                Logger.getLogger(Nivel1.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             audioP = new AudioClip (this.getClass().getResource("/Audios/perder.wav").toString());
                             audioP.play();
                         }
@@ -401,13 +416,8 @@ public class Nivel1 extends Vista {
             }
             if(bg.getxPos() == -4500){
                
-                /*try {
-                    singleton.setScore(singleton.getScore() * modelo.getSalud() * modelo.getVidas());
-                } catch (IOException ex) {
-                    Logger.getLogger(Nivel1.class.getName()).log(Level.SEVERE, null, ex);
-                }
                 
-                ---------------------------------NOTA----------------------------------
+                /*---------------------------------NOTA----------------------------------
                  
 
                 Esta funcion almacena el puntaje en el archivo. Pero cuando se habilita, el nivel no se acaba,
@@ -420,6 +430,11 @@ public class Nivel1 extends Vista {
                 
                 audioV = new AudioClip (this.getClass().getResource("/Audios/victoria.wav").toString());
                 audioV.play();
+                try {
+                    singleton.setScore(singleton.getScore() * modelo.getSalud() * modelo.getVidas());
+                } catch (IOException ex) {
+                    Logger.getLogger(Nivel1.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             
             if(((player.getyPos()+player.getHeight())>=371)&&dangerDown){

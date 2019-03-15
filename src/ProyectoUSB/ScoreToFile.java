@@ -42,7 +42,11 @@ public class ScoreToFile {
         }
         Scanner scanner=new Scanner(archivo);
         
-        int retorno=scanner.nextInt();
+        
+        int retorno=0;
+        if(scanner.hasNextInt()){
+        retorno=scanner.nextInt();
+        }
         return retorno;
     }
     
